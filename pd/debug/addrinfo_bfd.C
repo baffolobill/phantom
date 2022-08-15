@@ -149,7 +149,11 @@ void bfd_t::file_t::setup() {
 	unsigned int _section_count = 0;
 
 	for(asection *sect = _abfd->sections; sect != NULL; sect = sect->next) {
+#ifdef bfd_get_section_flags
 		if(!(bfd_get_section_flags(_abfd, sect) & SEC_CODE))
+#else
+		if(!(bfd_section_flags(sect) & SEC_CODE))
+#endif
 			continue;
 
 		++_section_count;
@@ -159,7 +163,11 @@ void bfd_t::file_t::setup() {
 	asection **sectp = _sections;
 
 	for(asection *sect = _abfd->sections; sect != NULL; sect = sect->next) {
+#ifdef bfd_get_section_flags
 		if(!(bfd_get_section_flags(_abfd, sect) & SEC_CODE))
+#else
+		if(!(bfd_section_flags(sect) & SEC_CODE))
+#endif
 			continue;
 
 		*(sectp++) = sect;
@@ -184,13 +192,19 @@ void bfd_t::file_t::print(
 
 	for(unsigned int i = 0; i < section_count; ++i) {
 		asection *sect = sections[i];
-
+#ifdef bfd_get_section_vma
 		bfd_vma vma = bfd_get_section_vma(abfd, sect);
+#else
+		bfd_vma vma = bfd_section_vma(sect);
+#endif
 
 		if(pc < vma)
 			continue;
-
+#ifdef bfd_get_section_size
 		bfd_size_type size = bfd_get_section_size(sect);
+#else
+		bfd_size_type size = bfd_section_size(sect);
+#endif
 		if(pc >= vma + size)
 			continue;
 
