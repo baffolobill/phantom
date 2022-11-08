@@ -129,7 +129,7 @@ ssl_ctx_t::ssl_ctx_t(
 	mode_t _mode, ssl_auth_t const *auth, string_t const &ciphers
 ) : internal(NULL) {
 	SSL_CTX *ctx = SSL_CTX_new(
-		_mode == client ? TLSv1_3_client_method() : TLSv1_3_server_method()
+		_mode == client ? TLS_client_method() : TLS_server_method()
 	);
 
 	if(!ctx) {
