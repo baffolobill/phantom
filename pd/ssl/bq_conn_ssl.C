@@ -110,6 +110,11 @@ static bool do_accept(SSL *ssl, int &SSL_res, interval_t *timeout) throw() {
 }
 
 static bool do_connect(SSL *ssl, int &SSL_res, interval_t *timeout) throw() {
+	if(!SSL_set_tlsext_host_name(ssl, "example.com")) {
+		log_openssl_error(log::error);
+		throw exception_log_t(log::error, "SSL_sni");
+	}
+
 	SSL_set_connect_state(ssl);
 
 	while(true) {
